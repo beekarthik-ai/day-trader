@@ -1,0 +1,32 @@
+
+Below are the remaining work to do on this project, somewhat organized by topic
+
+- Trader Object
+  - function to get net worth
+  - function to show graph of worth
+  - some tracking of all buying and selling
+    - make this un-editable so that trading history cannot be faked
+  - limit order functions (find way to have script run even when computer not open)
+
+- Shorts
+  - borrowing fee calculator
+  - function that confirms uptick before short selling
+
+- Futures, Swaps, Options
+  - implement futures, swaps, and Options
+    - make sure any kind of option contract can be created (https://en.wikipedia.org/wiki/Option_style)
+    - create a set
+
+- Portfolio
+  - implement portfolio that can be viewed nicely - possibly make it an object
+
+- Analysis tools
+  - implement fundamental analysis and technical analysis tools
+
+- Testing
+  - make sure that all transactions do not break the simulation
+
+- UI
+ - make saving and loading intuitive and effortless
+ - create save_all and load_all functions
+ - good error messages
