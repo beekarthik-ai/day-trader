@@ -13,7 +13,7 @@ class Trader:
          all_traders.append(self)
 
     def buy(self, stock_name, quantity, price):
-        assert money >= quantity*price, "Insufficient funds to place order"
+        assert self.money >= quantity*price, "Insufficient funds to place order"
         self.money -= quantity*price
         for pos in self.portfolio:
             if pos.name is stock_name and type(pos) != Short:
@@ -44,7 +44,7 @@ class Trader:
         """
         bid_offer = get_bid_offer(stock_name, True)
         assert quantity <= bid_offer[1], 'Quantity desired ({0}) is greater than ask size ({1})'.format(quantity, bid_offer[1])
-        self.buy(stock_name, quantity, bid_offer[0])
+        self.sell(stock_name, quantity, bid_offer[0])
 
     def short_sell(self, stock_name, quantity):
         """
@@ -64,12 +64,17 @@ class Trader:
         Cover some quantity of stock for the current ask price at or below the current
         ask size.
         """
+        long_pos = None
+        short_pos = None
+
         for pos in self.portfolio:
+            print(pos.name, type(pos))
             if pos.name is stock_name and type(pos) == Position:
                 long_pos = pos
             if pos.name is stock_name and type(pos) == Short:
                 short_pos = pos
-        assert long_pos.quantity >= quantity, 'Not enough stock to cover desired quantity'
+
+        assert (long_pos == None) or (long_pos.quantity >= quantity), 'Not enough stock to cover desired quantity'
         long_pos.subtract(quantity)
         short_pos.subtract(quantity)
 
@@ -89,7 +94,7 @@ class Position:
         if self.quantity == 0:
             del self
     def __repr__(self):
-        return (self.name, self.quantity, type(self))
+        return str(self.name)+' '+str(self.quantity)
 
 class Short(Position):
     """
@@ -97,9 +102,9 @@ class Short(Position):
     """
     def __init__(self, name, quantity):
         super().__init__(name, quantity)
-        self.borrow_fee = get_borrowing_fee(stock_name)
+        self.borrow_fee = get_borrowing_fee(name)
 
-def get_borrowing_fee(stock_name):
+def get_borrowing_fee(name):
     return
 
 def get_ask_offer(stock_name, return_values=False):
@@ -138,8 +143,8 @@ def save(trader):
 
     if file_name in all_file_names:
         print("A file with the name {0}, would you like to overwrite that file?".format(file_name))
-        input = raw_input("Yes/No: ")
-        if input.lower() is 'yes':
+        ans = input("Yes/No: ")
+        if ans == 'yes':
             pickle.dump(trader, open(file_path+file_name, 'wb'))
     else:
         pickle.dump(trader, open(file_path+file_name, 'wb'))
