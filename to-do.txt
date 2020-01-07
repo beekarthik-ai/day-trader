@@ -15,7 +15,8 @@ Below are the remaining work to do on this project, somewhat organized by topic
 - Futures, Swaps, Options
   - implement futures, swaps, and Options
     - make sure any kind of option contract can be created (https://en.wikipedia.org/wiki/Option_style)
-    - create a set
+    - use black scholes or yahoo finance scraping to price option
+      - build historical std. dev model
 
 - Portfolio
   - implement portfolio that can be viewed nicely - possibly make it an object
@@ -30,3 +31,7 @@ Below are the remaining work to do on this project, somewhat organized by topic
  - make saving and loading intuitive and effortless
  - create save_all and load_all functions
  - good error messages
+
+- Other
+  - figure out branching
+  - understand all yfinance terms

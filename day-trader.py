@@ -8,7 +8,7 @@ class Trader:
     """
     def __init__(self, name, money):
          self.name = name
-         self.portfolio = []
+         self.portfolio = Portfolio(name)
          self.money = money
          all_traders.append(self)
 
@@ -68,15 +68,42 @@ class Trader:
         short_pos = None
 
         for pos in self.portfolio:
-            print(pos.name, type(pos))
-            if pos.name is stock_name and type(pos) == Position:
+            if pos.name == stock_name and type(pos) == Position:
                 long_pos = pos
-            if pos.name is stock_name and type(pos) == Short:
+            if pos.name == stock_name and type(pos) == Short:
                 short_pos = pos
 
         assert (long_pos == None) or (long_pos.quantity >= quantity), 'Not enough stock to cover desired quantity'
         long_pos.subtract(quantity)
         short_pos.subtract(quantity)
+
+class Portfolio:
+    """
+    Represents a trading portfolio. Current implementation has the portfolio behave
+    almost exactly like a Python list, except for some behaviors such as its representation
+    """
+    def __init__(self, owner):
+        self.portfolio_list = []
+    def __getitem__(self, index):
+        return self.portfolio_list[index]
+    def __setitem__(self, index, value):
+        self.portfolio_list[index] = value
+    def __iter__(self):
+        return iter(self.portfolio_list)
+    def __next__(self):
+        return self.portfolio_list.next()
+    def __len__(self):
+        return len(self.portfolio_list)
+    def append(self, value):
+        self.portfolio_list.append(value)
+    def extend(self, other_list):
+        self.portfolio.extend(other_list)
+    def __repr__(self):
+        return_val = ''
+        for pos in self.portfolio_list:
+            return_val += str(pos) +'\n'
+        return return_val
+
 
 class Position:
     """
