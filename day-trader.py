@@ -1,5 +1,6 @@
 import yfinance as yf
 import pickle
+import options_scraper
 
 class Trader:
     """
@@ -98,12 +99,15 @@ class Portfolio:
         self.portfolio_list.append(value)
     def extend(self, other_list):
         self.portfolio.extend(other_list)
+    def remove(self, value):
+        for i in self.portfolio_list:
+            if i is value:
+                self.portfolio_list.remove(i)
     def __repr__(self):
         return_val = ''
         for pos in self.portfolio_list:
             return_val += str(pos) +'\n'
         return return_val
-
 
 class Position:
     """
@@ -119,7 +123,7 @@ class Position:
     def subtract(self, amount):
         self.quantity-=amount
         if self.quantity == 0:
-            del self
+            self.portfolio.remove(self)
     def __repr__(self):
         return str(self.name)+' '+str(self.quantity)
 
@@ -130,6 +134,25 @@ class Short(Position):
     def __init__(self, name, quantity):
         super().__init__(name, quantity)
         self.borrow_fee = get_borrowing_fee(name)
+
+class Call(Position):
+    """
+    Represents a call option
+    """
+    def __init__(self, name, quantity, expire_date, strike_price):
+        super().__init__(name,quantity)
+        self.expire_date = expire_date
+        self.strike_price = strike_price
+
+class Put(Short):
+    """
+    Represents a put option
+    """
+    def __init__(self, name, quantity, expire_date, strike_price):
+        super().__init__(name,quantity)
+        self.expire_date = expire_date
+        self.strike_price = strike_price
+
 
 def get_borrowing_fee(name):
     return
@@ -145,6 +168,30 @@ def get_bid_offer(stock_name, return_values=False):
     if return_values:
         return info['bid'], info['bidSize']
     return '${0} x {1}'.format(info['bid'], info['bidSize'])
+
+def get_ask_offer_call(stock_name, expire_date, strike_price, return_values=False):
+    data = get_call_data(stock_name, expire_date, strike_price)[1]
+    if return_values:
+        return data
+    return "Current premium is " + data
+
+def get_bid_offer_call(stock_name, expire_date, strike_price, return_values=False):
+    data = get_call_data(stock_name, expire_date, strike_price)[0]
+    if return_values:
+        return data
+    return "Current premium is " + data
+
+def get_ask_offer_put(stock_name, expire_date, strike_price, return_values=False):
+    data = get_put_data(stock_name, expire_date, strike_price)[1]
+    if return_values:
+        return data
+    return "Current premium is " + data
+
+def get_bid_offer_put(stock_name, expire_date, strike_price, return_values=False):
+    data = get_put_data(stock_name, expire_date, strike_price)[0]
+    if return_values:
+        return data
+    return "Current premium is " + data
 
 ###################
 # Analysis Tools #
@@ -188,6 +235,5 @@ def load(file_name):
 ####################################
 #Loads data from previous sessions #
 ####################################
-
 if __name__ == '__main__':
     all_file_names = pickle.load(open('./pickled_data/all_file_names.p', 'rb'))

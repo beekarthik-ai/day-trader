@@ -35,3 +35,4 @@ Below are the remaining work to do on this project, somewhat organized by topic
 - Other
   - figure out branching
   - understand all yfinance terms
+  - fix removal of stocks from portfolio
